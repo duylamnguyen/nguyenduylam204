@@ -1,5 +1,9 @@
-﻿
-#include "Angel.h"  
+﻿//Chương trình vẽ 1 hình lập phương đơn vị theo mô hình lập trình OpenGL hiện đại
+
+#include "Angel.h"  /* Angel.h là file tự phát triển (tác giả Prof. Angel), có chứa cả khai báo includes glew và freeglut*/
+// Hop nhat
+
+// remember to prototype
 void generateGeometry(void);
 void initGPUBuffers(void);
 void shaderSetup(void);
@@ -22,7 +26,7 @@ vec3 normals[5000];
 GLuint program, model_loc, projection_loc, view_loc;
 
 mat4 mv, dccanh, dcxe, dcxanh, dcdo, dcvang, dcmaynang, nanggo;
-mat4  model,dccanh_xekhach,dcxekhach,dc_canh, dc_nhatru;
+mat4  model, dccanh_xekhach, dcxekhach, dc_canh, dc_nhatru;
 
 GLfloat ttxs, quaymaynang, nangthanhgo;
 
@@ -179,7 +183,7 @@ void to_mau(color4 color) {
 mat4 model_view, base_model;
 
 void ve() {
-	glUniformMatrix4fv(model_loc, 1, GL_TRUE,model* mv);
+	glUniformMatrix4fv(model_loc, 1, GL_TRUE, model * mv);
 	glDrawArrays(GL_TRIANGLES, 0, NumPoints);    /*Vẽ các tam giác*/
 }
 
@@ -198,11 +202,11 @@ void matduoi() {
 // Vẽ map
 void map() {
 	matduoi();
-	
+
 }
 
 void ve2() {
-	glUniformMatrix4fv(model_loc, 1, GL_TRUE, model *dcxekhach* mv);
+	glUniformMatrix4fv(model_loc, 1, GL_TRUE, model * dcxekhach * mv);
 	glDrawArrays(GL_TRIANGLES, 0, NumPoints);    /*Vẽ các tam giác*/
 }
 
@@ -225,7 +229,7 @@ void vach_dung() {
 }
 void vach_ke_duong() {
 	for (double i = -3.5; i < 3; i++) {
-		vachke(i+0.5, -2.0, 2.5);
+		vachke(i + 0.5, -2.0, 2.5);
 	}
 	vach_dung();
 }
@@ -237,7 +241,7 @@ float check1 = 1;
 
 
 
-// xe con
+// ô tô buýt
 void gam_xe1() {
 	material_diffuse = vec4(1.0, 1.0, 0.0, 1.0);  // mau vat
 	diffuse_product = light_diffuse * material_diffuse;
@@ -379,6 +383,7 @@ void oto() {
 	dcxe = Translate(0, 0, ttxs);
 }
 
+// ô tô
 
 GLfloat cam_pos_x = 0;
 GLfloat cam_pos_y = 0;
@@ -387,16 +392,18 @@ GLfloat cam_pos_z = 2;
 void display(void)
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	
+
 	map();
-	
 
 	vach_ke_duong();
-	
-	oto();
-	
 
-	model =  RotateX(theta[1])  * RotateY(theta[2]) * RotateZ(theta[3]);
+	oto();
+	//oto2();
+
+	//nen()
+
+
+	model = RotateX(theta[1]) * RotateY(theta[2]) * RotateZ(theta[3]);
 	// view
 	point4 eye(0.0, 0.0, 6.0, 1.0);
 	point4 at(0.0, 0.0, 0.0, 1.0);
@@ -412,9 +419,62 @@ void display(void)
 }
 
 void spinCube() {
-		
+
 	glutPostRedisplay();
 }
+
+void keyboard(unsigned char key, int x, int y)
+{
+
+	switch (key) {
+	case '1': zNear *= 1.1f; zFar *= 1.1f; break;
+	case '!': zNear *= 0.9f; zFar *= 0.9f; break;
+
+	case 'x':
+		theta[1] += 5;
+		if (theta[1] > 360) theta[1] -= 360;
+		break;
+	case 'X':
+		theta[1] -= 5;
+		if (theta[1] > 360) theta[1] -= 360;
+		break;
+	case 'y':
+		theta[2] += 5;
+		if (theta[2] > 360) theta[2] -= 360;
+		break;
+	case 'Y':
+		theta[2] -= 5;
+		if (theta[2] > 360) theta[2] -= 360;
+		break;
+
+	case 'c': // đóng mở cửa xe
+		dcc[0] -= 5;
+		if (dcc[0] - 5 <= -90) dcc[0] = -90;
+		glutPostRedisplay();
+		break;
+	case 'C':
+		dcc[0] += 5;
+		if (dcc[0] + 5 >= 0) dcc[0] = 0;
+		glutPostRedisplay();
+		break;
+
+
+	case '3': // xe đi
+		ttxs += 0.05;
+		if (ttxs >= 1.5) { ttxs = 1.5; }
+		glutPostRedisplay();
+		break;
+	case '#':// xe về
+		ttxs -= 0.05;
+		if (ttxs <= 0) { ttxs = 0; }
+		glutPostRedisplay();
+		break;
+
+
+
+	}
+}
+
 
 
 
@@ -462,7 +522,7 @@ int main(int argc, char** argv)
 	shaderSetup();
 
 	glutDisplayFunc(display);
-	
+	glutKeyboardFunc(keyboard);
 	glutIdleFunc(spinCube);
 
 	glutSpecialFunc(SpecialFunc);
